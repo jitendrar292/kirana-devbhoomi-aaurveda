@@ -1,0 +1,35 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install system deps
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip openjdk-8-jdk git zip unzip
+
+      - name: Install Buildozer
+        run: |
+          pip3 install --user buildozer
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Build APK (debug)
+        run: |
+          buildozer android debug
+        # this will produce bin/*.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ProductOCR-apk
+          path: bin/*.apk
