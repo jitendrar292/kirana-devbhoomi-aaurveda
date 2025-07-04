@@ -3,27 +3,47 @@ import pandas as pd
 import time
 import os
 
-# Excel setup
+# Excel file setup
 excel_file = "product_data.xlsx"
 if not os.path.exists(excel_file):
-    df = pd.DataFrame(columns=["Timestamp", "Image"])
+    df = pd.DataFrame(columns=["Timestamp", "Image", "Price"])
     df.to_excel(excel_file, index=False)
 
-st.title("📷 Product Image Capture App (No OCR)")
+st.title("📸 Product Capture App with Manual Price Entry")
 
-frame = st.camera_input("Capture product image")
+# Input from webcam
+frame = st.camera_input("Take a product photo")
 
-if frame is not None:
+# Price input
+price = st.text_input("Enter product price (e.g., ₹1499)")
+
+# Save button
+if frame is not None and price and st.button("Save Entry"):
     ts = int(time.time())
-    filename = f"product_{ts}.png"
+    image_name = f"product_{ts}.png"
 
-    # Save image to file
-    with open(filename, "wb") as f:
+    # Save image
+    with open(image_name, "wb") as f:
         f.write(frame.getbuffer())
 
-    # Save record to Excel
+    # Append to Excel
     df = pd.read_excel(excel_file)
-    df.loc[len(df)] = [ts, filename]
+    df.loc[len(df)] = [ts, image_name, price]
     df.to_excel(excel_file, index=False)
 
-    st.success(f"✅ Image saved as {filename} and logged to Excel.")
+    st.success(f"✅ Saved: {image_name} at {price}")
+
+# Show Excel contents
+if os.path.exists(excel_file):
+    st.subheader("📊 Logged Entries")
+    df = pd.read_excel(excel_file)
+    st.dataframe(df)
+
+    # Download option
+    with open(excel_file, "rb") as f:
+        st.download_button(
+            label="📥 Download Excel",
+            data=f,
+            file_name="product_data.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
