@@ -1,4 +1,3 @@
-opencv-python
-pytesseract
+streamlit
 pandas
-kivy
+openpyxl
