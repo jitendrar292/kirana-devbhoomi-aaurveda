@@ -5,3 +5,4 @@ pandas
 pyzbar
 openpyxl
 numpy
+libgl1
