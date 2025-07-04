@@ -1,8 +1,5 @@
 streamlit
 opencv-python
-pytesseract
 pandas
-pyzbar
 openpyxl
 numpy
-libgl1
